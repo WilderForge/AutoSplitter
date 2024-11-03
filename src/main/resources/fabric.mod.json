@@ -1,0 +1,42 @@
+{
+	"schemaVersion": 1,
+	"id":"autosplitter",
+	"version":"@AUTOSPLITTER_VERSION@",
+	
+	"name":"Wildermyth Autosplitter",
+	"description": "An autosplitter for speedrunning Wildermyth.",
+	"authors": [
+		"Gamebuster19901"
+	],
+	
+	"contact": {
+		"sources": "https://wildermods.com/autosplitter",
+		"issues": "https://wildermods.com/autosplitter/issues",
+		"homepage": "https://wildermods.com/autosplitter"
+	},
+	
+	"mixins": [
+		"autosplitter.mixins.json"
+	],
+	"depends":{
+		"wildermyth": ">=1.16.0",
+		"wilderforge": ">=0.0.0.0"
+	},
+	"breaks":{
+		"wildermyth": [
+			"<1.16.0"
+		],
+		"minecraft":["*"]
+	},
+	"custom": {
+		"credits":[
+			"",
+			"",
+			"[title]Programming[]",
+			"Gamebuster [discord]@Gamebuster"
+		],
+		"annotatedClasses":[
+			"com.wildermods.autosplitter.Main"
+		]
+	}
+}
