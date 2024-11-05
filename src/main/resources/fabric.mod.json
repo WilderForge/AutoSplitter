@@ -30,10 +30,11 @@
 	},
 	"custom": {
 		"credits":[
-			"",
-			"",
 			"[title]Programming[]",
-			"Gamebuster [discord]@Gamebuster"
+			"Gamebuster [discord]@Gamebuster",
+			"",
+			"[title]Special Thanks[]",
+			"LlamaLad7"
 		],
 		"annotatedClasses":[
 			"com.wildermods.autosplitter.Main"

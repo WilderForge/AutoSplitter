@@ -19,9 +19,11 @@ public class PopUpManagerMixin {
 		at = @At(
 			value = "HEAD"
 		),
-		cancellable = true
+		cancellable = true,
+		require = 1
 	)
 	public void onPushFront(IPopUp popup, boolean skipFadeIn, CallbackInfo c) {
+		WilderForge.LOGGER.fatal("POPUP FPUSHED: " + popup);
 		if(WilderForge.MAIN_BUS.fire(new PopUpAddEvent.PushFrontEvent.Pre(popup, skipFadeIn))) {
 			c.cancel();
 		}
@@ -32,9 +34,11 @@ public class PopUpManagerMixin {
 		at = @At(
 			value = "HEAD"
 		),
-		cancellable = true
+		cancellable = true,
+		require = 1
 	)
 	public void onPushBack(IPopUp popup, CallbackInfo c) {
+		WilderForge.LOGGER.fatal("POPUP BPUSHED: " + popup);
 		if(WilderForge.MAIN_BUS.fire(new PopUpAddEvent.PushBackEvent.Pre(popup))) {
 			c.cancel();
 		}
@@ -43,14 +47,17 @@ public class PopUpManagerMixin {
 	@Inject(
 		method = "removePopUp",
 		at = @At(
-			value = "HEAD"
+			value = "TAIL"
 		),
-		cancellable = true
+		cancellable = true,
+		require = 1
 	)
 	public void onRemovePopup(IPopUp popup, CallbackInfo c) {
-		if(WilderForge.MAIN_BUS.fire(new PopUpRemoveEvent.Pre(popup))) {
+		WilderForge.LOGGER.error("POPUP REMOVED: " + popup.toString());
+		if(WilderForge.MAIN_BUS.fire(new PopUpRemoveEvent.Post(popup))) {
 			c.cancel();
 		}
+		
 	}
 	
 }
