@@ -1,0 +1,19 @@
+[versions]
+jetty_version = "12.0.14"
+wilderforge_version = "0.1.1.3"
+workspace_version = "4.2.1.0"
+
+[libraries]
+
+jetty_ee10_websocket_server = { module = "org.eclipse.jetty.ee10.websocket:jetty-ee10-websocket-jetty-server", version.ref = "jetty_version" }
+jetty_websocket_server = { module = "org.eclipse.jetty.websocket:jetty-websocket-jetty-server", version.ref = "jetty_version" }
+jetty_websocket_client = { module = "org.eclipse.jetty.websocket:jetty-websocket-core-client", version.ref = "jetty_version" }
+jetty_server = { module = "org.eclipse.jetty:jetty-server", version.ref = "jetty_version" }
+jetty_ee10_servlet = { module = "org.eclipse.jetty.ee10:jetty-ee10-servlet", version.ref = "jetty_version" }
+wilderforge = { module = "com.wildermods:wilderforge", version.ref = "wilderforge_version" }
+
+[bundles]
+jetty = [ "jetty_ee10_websocket_server", "jetty_websocket_server", "jetty_websocket_client", "jetty_server", "jetty_ee10_servlet" ]
+
+[plugins]
+workspace = { id = "com.wildermods.workspace", version.ref = "workspace_version" }

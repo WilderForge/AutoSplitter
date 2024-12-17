@@ -1,19 +1,12 @@
-buildscript {
-	dependencies {
-		classpath group: 'commons-io', name: 'commons-io', version: commonsIOVersion
-		classpath files('libs/wilderworkspace-4.0.0.0.jar')
-	}
-	repositories {
-		mavenCentral()
-		mavenLocal()
-	}
-}
-
-
 plugins {
 	id 'java-library'
 	id 'eclipse'
 }
+
+version = autoSplitterVersion
+group = "com.wildermods"
+archivesBaseName = "autosplitter"
+
 apply plugin: 'com.wildermods.workspace'
 
 repositories {
@@ -22,14 +15,14 @@ repositories {
 	maven {
 		url "https://maven.fabricmc.net/"
 	}
+    maven {
+        url "https://maven.wildermods.com/"
+    }
 }
 
 sourceCompatibility = '17'
 targetCompatibility = '17'
 
-version = wilderForgeVersion
-group = "com.wildermods"
-archivesBaseName = "autosplitter"
 
 processResources {
     eachFile { file ->
@@ -61,12 +54,12 @@ task processSources(type: Copy) {
 compileJava.dependsOn processSources
 
 dependencies {
-	implementation group: 'org.eclipse.jetty.ee10.websocket', name: 'jetty-ee10-websocket-jetty-server', version: '12.0.14'
-	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-jetty-server', version: '12.0.14'
-	implementation group: 'org.eclipse.jetty.websocket', name: 'jetty-websocket-core-client', version: '12.0.14'
-	implementation group: 'org.eclipse.jetty', name: 'jetty-server', version: '12.0.14'
-	implementation group: 'org.eclipse.jetty.ee10', name: 'jetty-ee10-servlet', version: '12.0.14'
-	implementation group: 'com.wildermods', name: 'wilderforge', version: '0.0.0.0'
+	implementation libs.jetty.ee10.websocket.server
+	implementation libs.jetty.websocket.server
+	implementation libs.jetty.websocket.client
+	implementation libs.jetty.server
+	implementation libs.jetty.ee10.servlet
+	implementation libs.wilderforge
 	
 	/**********
 	don't alter the dependencies below
