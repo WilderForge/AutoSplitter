@@ -10,33 +10,53 @@ import org.eclipse.jetty.server.Server;
 
 import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.livesplit.Command;
+import com.wildermods.wilderforge.launch.logging.LogLevel;
+import com.wildermods.wilderforge.launch.logging.Logger;
 
 public class SplitterServer extends Server implements AutosplitCommandSender {
 
+	private static final Logger LOGGER = new Logger(SplitterServer.class);
     public static final String DEFAULT_HOST = "localhost";
-    public static final int DEFAULT_PORT = 16834;
+    public static final int DEFAULT_PORT = 55555;
+    private static SplitterServer INSTANCE = null;
 	
     final CopyOnWriteArrayList<SplitterWebSocket> clients = new CopyOnWriteArrayList<>();
     
-    private final Server server;
+    private Server server;
     
 	public SplitterServer() throws Exception {
 		this(DEFAULT_HOST, DEFAULT_PORT);
 	}
 
 	public SplitterServer(String host, int port) throws Exception {
-		Server server = new Server(new InetSocketAddress(host, port));
-		
-		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-		context.setContextPath("/");
-		server.setHandler(context);
-		
-		JettyWebSocketServletContainerInitializer.configure(context, null);
-		ServletHolder holder = new ServletHolder("splitter", new SplitterSocketServlet());
-		context.addServlet(holder, "/");
-		
-		this.server = server;
-		this.server.start();
+		establishServer(host, port);
+	}
+	
+	public void establishServer(String host, int port) {
+		if(server != null) {
+			try {
+				server.stop();
+			} catch (Exception e) {
+				LOGGER.catching(LogLevel.ERROR, e);
+			}
+		}
+		try {
+			Server server = new Server(new InetSocketAddress(host, port));
+			
+			ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+			context.setContextPath("/");
+			server.setHandler(context);
+			
+			JettyWebSocketServletContainerInitializer.configure(context, null);
+			ServletHolder holder = new ServletHolder("splitter", new SplitterSocketServlet());
+			context.addServlet(holder, "/");
+			
+			this.server = server;
+			this.server.start();
+		}
+		catch(Exception e) {
+			
+		}
 	}
 	
 	public Server getImpl() {
@@ -48,6 +68,10 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 		for(SplitterWebSocket client : clients) {
 			client.send(command);
 		}
+	}
+	
+	public SplitterServer getInstance() {
+		return INSTANCE;
 	}
 	
 }
