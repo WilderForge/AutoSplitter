@@ -12,6 +12,7 @@ import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
 import com.wildermods.wilderforge.api.mechanicsV1.ChapterSetEvent;
 import com.wildermods.wilderforge.api.mixins.v1.Cast;
 import com.wildermods.wilderforge.api.modLoadingV1.Mod;
+import com.wildermods.wilderforge.api.modLoadingV1.event.PostInitializationEvent;
 import com.wildermods.wilderforge.api.modLoadingV1.event.PreInitializationEvent;
 import com.wildermods.wilderforge.launch.WilderForge;
 import com.wildermods.wilderforge.launch.logging.Debug;
@@ -41,6 +42,10 @@ public class Main {
 	public static void onPreInitialization(PreInitializationEvent e) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
 		WilderForge.MAIN_BUS.register(Main.class);
+	}
+	
+	@SubscribeEvent
+	public static void onPostInitialization(PostInitializationEvent e) throws Exception {
 		timer = new SplitTimer();
 		WilderForge.MAIN_BUS.register(timer);
 	}
