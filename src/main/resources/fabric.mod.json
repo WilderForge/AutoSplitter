@@ -20,7 +20,7 @@
 	],
 	"depends":{
 		"wildermyth": ">=1.16.0",
-		"wilderforge": ">=0.0.0.0"
+		"wilderforge": ">=0.1.4.0"
 	},
 	"breaks":{
 		"wildermyth": [
