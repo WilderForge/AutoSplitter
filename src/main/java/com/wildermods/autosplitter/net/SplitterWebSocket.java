@@ -15,6 +15,7 @@ import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.Main;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.livesplit.Commands;
+import com.wildermods.wilderforge.launch.logging.Debug;
 import com.wildermods.wilderforge.launch.logging.Logger;
 
 @WebSocket
@@ -28,6 +29,7 @@ public class SplitterWebSocket implements AutosplitCommandSender {
 	
 	@OnWebSocketClose
 	public void onWebSocketClose(int statusCode, String reason) {
+		Debug.trace();
 		sessionLog("Closing session. Code: " + statusCode + " Reason: " + reason);
 	    heartbeatScheduler.shutdown();
 		this.session = null;

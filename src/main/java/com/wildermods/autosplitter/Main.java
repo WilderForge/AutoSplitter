@@ -12,6 +12,7 @@ import com.wildermods.autosplitter.time.SplitTimer;
 import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
 import com.wildermods.wilderforge.api.mechanicsV1.ChapterSetEvent;
 import com.wildermods.wilderforge.api.mixins.v1.Cast;
+import com.wildermods.wilderforge.api.modLoadingV1.CoremodInfo;
 import com.wildermods.wilderforge.api.modLoadingV1.Mod;
 import com.wildermods.wilderforge.api.modLoadingV1.event.PostInitializationEvent;
 import com.wildermods.wilderforge.api.modLoadingV1.event.PreInitializationEvent;
@@ -37,11 +38,17 @@ public class Main {
 	
 	public static SplitTimer timer;
 	private static Thread MAIN_THREAD;
+	
+	private static AutosplitterConfiguration defaultConfig;
 	private static AutosplitterConfiguration config;
 	
 	public static void main(String[] args) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
 		onPreInitialization(new PreInitializationEvent());
+	}
+	
+	public static AutosplitterConfiguration getDefaultConfig() {
+		return defaultConfig;
 	}
 	
 	public static AutosplitterConfiguration getConfig() {
@@ -60,9 +67,11 @@ public class Main {
 	
 	@SubscribeEvent
 	public static void onPostInitialization(PostInitializationEvent e) throws Exception {
-		config = Cast.from(Configuration.getConfig(Coremods.getCoremod(MOD_ID)));
+		CoremodInfo coremod = Coremods.getCoremod(MOD_ID);
+		defaultConfig = Cast.from(Configuration.getDefaultConfig(coremod));
+		config = Cast.from(Configuration.getConfig(coremod));
 		if(config.startServletOnStartup) {
-			timer = new SplitTimer();
+			timer = new SplitTimer(config.deriveSettings());
 			WilderForge.MAIN_BUS.register(timer);
 		}
 	}
@@ -145,7 +154,7 @@ public class Main {
 			return;
 		}
 		if(config.autosplit && config.splitOnChapterComplete) {
-			if(e.getGameSettings().lastChapter.num < e.getNewChapter() || config.splitOnFinalChapterComplete) {
+			if(e.getGameSettings().lastChapter.num > e.getNewChapter() || config.splitOnFinalChapterComplete) {
 				timer.split();
 			}
 		}

@@ -9,8 +9,9 @@ import org.eclipse.jetty.ee10.websocket.server.config.JettyWebSocketServletConta
 import org.eclipse.jetty.server.Server;
 
 import com.wildermods.autosplitter.AutosplitCommandSender;
+import com.wildermods.autosplitter.Main;
 import com.wildermods.autosplitter.livesplit.Command;
-import com.wildermods.wilderforge.launch.logging.LogLevel;
+import com.wildermods.autosplitter.time.TimerSettings;
 import com.wildermods.wilderforge.launch.logging.Logger;
 
 public class SplitterServer extends Server implements AutosplitCommandSender {
@@ -25,10 +26,14 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
     private Server server;
     
 	public SplitterServer() throws Exception {
-		this(DEFAULT_HOST, DEFAULT_PORT);
+		this(Main.getDefaultConfig().deriveSettings());
 	}
 
-	public SplitterServer(String host, int port) throws Exception {
+	public SplitterServer(TimerSettings settings) throws Exception {
+		this(settings.host(), settings.port());
+	}
+	
+	private SplitterServer(String host, int port) throws Exception {
 		establishServer(host, port);
 	}
 	
@@ -37,7 +42,7 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 			try {
 				server.stop();
 			} catch (Exception e) {
-				LOGGER.catching(LogLevel.ERROR, e);
+				LOGGER.catching(e);
 			}
 		}
 		try {
@@ -55,7 +60,7 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 			this.server.start();
 		}
 		catch(Exception e) {
-			
+			Main.LOGGER.catching(e);
 		}
 	}
 	

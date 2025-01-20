@@ -22,20 +22,19 @@ public class SplitTimer extends PausingTimer implements Timed, AutosplitCommandS
     private TimerSettings settings;
 
     public SplitTimer() throws Exception {
-    	this(TimerSettings.defaultSettings());
+    	this(Main.getDefaultConfig().deriveSettings());
     }
     
     public SplitTimer(TimerSettings settings) throws Exception {
-        this(new SplitterServer(settings.host(), settings.port()));
-    }
-
-    public SplitTimer(String host, int port) throws Exception {
-        this(new SplitterServer(host, port));
+    	super(new RealTimeSegment());
+        this.settings = settings;
+        this.server = new SplitterServer(settings);
     }
     
-    private SplitTimer(SplitterServer server) {
+    private SplitTimer(SplitTimer parent) {
     	super(new RealTimeSegment());
-    	this.server = server;
+    	this.settings = parent.settings;
+    	this.server = parent.server;
     }
 
     public SplitterServer getServer() {
@@ -89,7 +88,7 @@ public class SplitTimer extends PausingTimer implements Timed, AutosplitCommandS
     	LOGGER.fatal("Timer resetting");
     	send(Commands.reset);
     	try {
-			Main.timer = new SplitTimer(settings);
+			Main.timer = new SplitTimer(this);
 		} catch (Exception e) {
 			LOGGER.catching(e);
 			Main.timer = null;
