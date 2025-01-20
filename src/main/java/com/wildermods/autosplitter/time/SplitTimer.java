@@ -4,9 +4,13 @@ import java.util.ArrayList;
 
 import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.Main;
+import com.wildermods.autosplitter.config.AutosplitterConfiguration;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.livesplit.Commands;
 import com.wildermods.autosplitter.net.SplitterServer;
+import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
+import com.wildermods.wilderforge.api.mixins.v1.Cast;
+import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigSavedEvent;
 import com.wildermods.wilderforge.launch.WilderForge;
 import com.wildermods.wilderforge.launch.logging.Logger;
 
@@ -98,6 +102,11 @@ public class SplitTimer extends PausingTimer implements Timed, AutosplitCommandS
 	@Override
 	public void send(Command command) {
 		server.send(command);
+	}
+	
+	@SubscribeEvent
+	public void onConfigSave(ConfigSavedEvent e) {
+		settings = ((AutosplitterConfiguration)e.getConfiguration()).deriveSettings();
 	}
 	
 	public void enqueuePause(Pause pause) {

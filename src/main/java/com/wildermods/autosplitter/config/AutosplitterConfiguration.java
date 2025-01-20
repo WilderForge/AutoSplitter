@@ -2,6 +2,7 @@ package com.wildermods.autosplitter.config;
 
 import java.util.function.Function;
 
+import com.wildermods.autosplitter.Main;
 import com.wildermods.autosplitter.net.SplitterServer;
 import com.wildermods.autosplitter.time.TimerSettings;
 import com.wildermods.wilderforge.api.modLoadingV1.config.Config;
@@ -10,7 +11,7 @@ import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigEntry.GUI;
 import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigEntry.Range;
 import com.wildermods.wilderforge.api.modLoadingV1.config.ModConfigurationEntryBuilder.ConfigurationUIContext;
 
-@Config(modid = "autosplitter")
+@Config(modid = Main.MOD_ID)
 public class AutosplitterConfiguration {
 	public static transient final int EARLIEST_COMPATIBLE_SCHEMA = 0;
 	public static transient final int CURRENT_SCHEMA = 0;

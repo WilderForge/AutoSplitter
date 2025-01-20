@@ -29,7 +29,7 @@ import com.worldwalkergames.legacy.ui.menu.RootMenuScreen;
 import com.worldwalkergames.legacy.ui.menu.WaitingForGameDialog;
 import com.worldwalkergames.ui.popup.IPopUp;
 
-@Mod(modid = "autosplitter", version = "@AUTOSPLITTER_VERSION@")
+@Mod(modid = Main.MOD_ID, version = "@AUTOSPLITTER_VERSION@")
 public class Main {
 
 	public static final String MOD_ID = "autosplitter";
@@ -39,20 +39,17 @@ public class Main {
 	public static SplitTimer timer;
 	private static Thread MAIN_THREAD;
 	
-	private static AutosplitterConfiguration defaultConfig;
-	private static AutosplitterConfiguration config;
-	
 	public static void main(String[] args) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
 		onPreInitialization(new PreInitializationEvent());
 	}
 	
 	public static AutosplitterConfiguration getDefaultConfig() {
-		return defaultConfig;
+		return Cast.from(Configuration.getDefaultConfig(Coremods.getCoremod(MOD_ID)));
 	}
 	
 	public static AutosplitterConfiguration getConfig() {
-		return config;
+		return Cast.from(Configuration.getConfig(Coremods.getCoremod(MOD_ID)));
 	}
 	
 	public static Thread getMainThread() {
@@ -67,19 +64,10 @@ public class Main {
 	
 	@SubscribeEvent
 	public static void onPostInitialization(PostInitializationEvent e) throws Exception {
-		CoremodInfo coremod = Coremods.getCoremod(MOD_ID);
-		defaultConfig = Cast.from(Configuration.getDefaultConfig(coremod));
-		config = Cast.from(Configuration.getConfig(coremod));
-		if(config.startServletOnStartup) {
-			timer = new SplitTimer(config.deriveSettings());
+		if(getConfig().startServletOnStartup) {
+			timer = new SplitTimer(getConfig().deriveSettings());
 			WilderForge.MAIN_BUS.register(timer);
 		}
-	}
-	
-	@SubscribeEvent
-	public static void onConfigSave(ConfigSavedEvent e) {
-		config = Cast.from(e.getConfiguration());
-		LOGGER.info("Configuration updated!");
 	}
 	
 	@SubscribeEvent
@@ -87,28 +75,33 @@ public class Main {
 		if(e instanceof PopUpAddEvent.Pre) {
 			IPopUp popup = e.getPopup();
 			if(popup instanceof WaitingForGameDialog) {
-				if(config.removeLoads) {
-					WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
-					switch(dialogAccessor.getContext()) {
-						case newCampaign:
+				WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
+				switch(dialogAccessor.getContext()) {
+					case newCampaign:
+						if(getConfig().autosplit) {
 							timer.start(true);
-							break;
-					
-						case campaignMission:
-						case loadScenario:
-						case loadCampaign:
-						case scenario:
-						case legacyBrowser: //If in the future there are categories that span multiple campaigns, opening the legacy would be a legal maneuver, even though it would slow you down.
+						}
+						break;
+				
+					case campaignMission:
+					case loadScenario:
+					case loadCampaign:
+					case scenario:
+					case legacyBrowser: //If in the future there are categories that span multiple campaigns, opening the legacy would be a legal maneuver, even though it would slow you down.
+						if(getConfig().removeLoads) {
 							timer.pause();
-							break;
-							
-						case changedMods: //shouln't be changing mods in the middle of a run...
-							LOGGER.error("Mods are changing!");
-							break;
-							
-						default:
+						}
+						break;
+						
+					case changedMods: //shouln't be changing mods in the middle of a run...
+						LOGGER.error("Mods are changing!");
+						break;
+						
+					default:
+						if(getConfig().removeLoads) {
 							timer.pause();
-					}
+						}
+						break;
 				}
 			}
 		}
@@ -120,28 +113,31 @@ public class Main {
 		if(e instanceof PopUpRemoveEvent.Post) {
 			IPopUp popup = e.getPopup();
 			if(popup instanceof WaitingForGameDialog) {
-				if(config.removeLoads) {
-					if(WilderForge.getViewDependencies().popUpManager.getPopupByClass(WaitingForGameDialog.class) != null) {
-						Main.LOGGER.fatal("Unpausing skipped. There are additional WaitingForGameDialog popups in the popUpManager");
-					}
-					WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
-					switch(dialogAccessor.getContext()) {
-						case campaignMission:
-						case loadCampaign:
-						case loadScenario:
-						case newCampaign:
-						case scenario:
-						case legacyBrowser: //If in the future there are categories that span multiple campaigns, opening the legacy would be a legal maneuver, even though it would slow you down.
+				if(WilderForge.getViewDependencies().popUpManager.getPopupByClass(WaitingForGameDialog.class) != null) {
+					Main.LOGGER.fatal("Unpausing skipped. There are additional WaitingForGameDialog popups in the popUpManager");
+				}
+				WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
+				switch(dialogAccessor.getContext()) {
+					case campaignMission:
+					case loadCampaign:
+					case loadScenario:
+					case newCampaign:
+					case scenario:
+					case legacyBrowser: //If in the future there are categories that span multiple campaigns, opening the legacy would be a legal maneuver, even though it would slow you down.
+						if(getConfig().removeLoads) {
 							timer.unpause();
-							break;
-							
-						case changedMods: //shouln't be changing mods in the middle of a run...
-							LOGGER.error("Mods finished changing!");
-							break;
-							
-						default:
+						}
+						break;
+						
+					case changedMods: //shouln't be changing mods in the middle of a run...
+						LOGGER.error("Mods finished changing!");
+						break;
+						
+					default:
+						if(getConfig().removeLoads) {
 							timer.unpause();
-					}
+						}
+						break;
 				}
 			}
 		}
@@ -153,8 +149,8 @@ public class Main {
 		if(e.getPreviousChapter() >= e.getNewChapter() || e.getPreviousChapter() == 0 && e.getNewChapter() == 1) {
 			return;
 		}
-		if(config.autosplit && config.splitOnChapterComplete) {
-			if(e.getGameSettings().lastChapter.num > e.getNewChapter() || config.splitOnFinalChapterComplete) {
+		if(getConfig().autosplit && getConfig().splitOnChapterComplete) {
+			if(e.getGameSettings().lastChapter.num > e.getNewChapter() || getConfig().splitOnFinalChapterComplete) {
 				timer.split();
 			}
 		}
@@ -163,12 +159,12 @@ public class Main {
 	@SubscribeEvent
 	public static void onScreenChange(TopLevelScreenChangeEvent.Post e) {
 		if(e.getNewScreen() instanceof GameResultsScreen) {
-			if(config.autosplit && config.splitOnVictoryPopup) {
+			if(getConfig().autosplit && getConfig().splitOnVictoryPopup) {
 				timer.split();
 			}
 		}
 		if(e.getNewScreen() instanceof RootMenuScreen) {
-			if(config.resetOnMainMenu) {
+			if(getConfig().resetOnMainMenu) {
 				timer.reset();
 			}
 		}
