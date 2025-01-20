@@ -12,12 +12,10 @@ import com.wildermods.autosplitter.time.SplitTimer;
 import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
 import com.wildermods.wilderforge.api.mechanicsV1.ChapterSetEvent;
 import com.wildermods.wilderforge.api.mixins.v1.Cast;
-import com.wildermods.wilderforge.api.modLoadingV1.CoremodInfo;
 import com.wildermods.wilderforge.api.modLoadingV1.Mod;
 import com.wildermods.wilderforge.api.modLoadingV1.event.PostInitializationEvent;
 import com.wildermods.wilderforge.api.modLoadingV1.event.PreInitializationEvent;
 import com.wildermods.wilderforge.api.uiV1.TopLevelScreenChangeEvent;
-import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigSavedEvent;
 import com.wildermods.wilderforge.launch.WilderForge;
 import com.wildermods.wilderforge.launch.coremods.Configuration;
 import com.wildermods.wilderforge.launch.coremods.Coremods;
@@ -147,10 +145,11 @@ public class Main {
 	public static void onChapterChange(ChapterSetEvent e) {
 		Debug.trace("CHAPTER CHANGED FROM " + e.getPreviousChapter() + " to " + e.getNewChapter());
 		if(e.getPreviousChapter() >= e.getNewChapter() || e.getPreviousChapter() == 0 && e.getNewChapter() == 1) {
+			//sometimes the chapter changes back to itself
 			return;
 		}
 		if(getConfig().autosplit && getConfig().splitOnChapterComplete) {
-			if(e.getGameSettings().lastChapter.num > e.getNewChapter() || getConfig().splitOnFinalChapterComplete) {
+			if(e.getNewChapter() <= e.getGameSettings().lastChapter.num) {
 				timer.split();
 			}
 		}

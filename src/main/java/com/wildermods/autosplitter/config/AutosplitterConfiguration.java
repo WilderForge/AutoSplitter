@@ -52,13 +52,6 @@ public class AutosplitterConfiguration {
 	
 	@ConfigEntry
 	@GUI.Localized(
-		nameLocalizer = "autosplitter.ui.configure.splitter.splitOnFinalChapterComplete",
-		tooltipLocalizer = "autosplitter.ui.configure.splitter.splitOnFinalChapterComplete.tooltip"
-	)
-	public boolean splitOnFinalChapterComplete = false;
-	
-	@ConfigEntry
-	@GUI.Localized(
 		nameLocalizer = "autosplitter.ui.configure.splitter.resetMainMenu",
 		tooltipLocalizer = "autosplitter.ui.configure.splitter.resetMainMenu.tooltip"
 	)
@@ -94,7 +87,7 @@ public class AutosplitterConfiguration {
 	public boolean startServletOnStartup = true;
 	
 	public TimerSettings deriveSettings() {
-		return new TimerSettings(host, port, autosplit, removeLoads, splitOnChapterComplete, splitOnVictoryPopup, splitOnFinalChapterComplete, resetOnMainMenu, resetOnDefeat);
+		return new TimerSettings(host, port, autosplit, removeLoads, splitOnChapterComplete, splitOnVictoryPopup, resetOnMainMenu, resetOnDefeat);
 	}
 	
 	private static class RuntimeSettingsBuilder implements Function<ConfigurationUIContext, AutosplitterModConfigurationEntryBuilder>{
