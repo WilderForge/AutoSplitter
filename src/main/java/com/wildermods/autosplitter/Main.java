@@ -38,7 +38,6 @@ public class Main {
 	
 	public static SplitTimer timer;
 	private static Thread MAIN_THREAD;
-	public static boolean postInit = false;
 	
 	public static void main(String[] args) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
@@ -76,7 +75,6 @@ public class Main {
 		if(e instanceof PopUpAddEvent.Pre) {
 			IPopUp popup = e.getPopup();
 			if(popup instanceof WaitingForGameDialog) {
-				postInit = true;
 				WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
 				switch(dialogAccessor.getContext()) {
 					case newCampaign:
