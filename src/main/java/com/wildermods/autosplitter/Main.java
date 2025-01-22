@@ -7,6 +7,7 @@ import java.lang.management.ThreadMXBean;
 import com.wildermods.autosplitter.config.AutosplitterConfiguration;
 import com.wildermods.autosplitter.event.PopUpEvent.PopUpAddEvent;
 import com.wildermods.autosplitter.event.PopUpEvent.PopUpRemoveEvent;
+import com.wildermods.autosplitter.mixins.SaveLoadDialogAccessor;
 import com.wildermods.autosplitter.mixins.WaitingForGameDialogAccessor;
 import com.wildermods.autosplitter.time.SplitTimer;
 import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
@@ -24,6 +25,7 @@ import com.wildermods.wilderforge.launch.logging.FullThreadInfo;
 import com.wildermods.wilderforge.launch.logging.Logger;
 import com.worldwalkergames.legacy.ui.credits.GameResultsScreen;
 import com.worldwalkergames.legacy.ui.menu.RootMenuScreen;
+import com.worldwalkergames.legacy.ui.menu.SaveLoadDialog;
 import com.worldwalkergames.legacy.ui.menu.WaitingForGameDialog;
 import com.worldwalkergames.ui.popup.IPopUp;
 
@@ -36,6 +38,7 @@ public class Main {
 	
 	public static SplitTimer timer;
 	private static Thread MAIN_THREAD;
+	public static boolean postInit = false;
 	
 	public static void main(String[] args) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
@@ -73,6 +76,7 @@ public class Main {
 		if(e instanceof PopUpAddEvent.Pre) {
 			IPopUp popup = e.getPopup();
 			if(popup instanceof WaitingForGameDialog) {
+				postInit = true;
 				WaitingForGameDialogAccessor dialogAccessor = Cast.from(popup);
 				switch(dialogAccessor.getContext()) {
 					case newCampaign:
@@ -163,7 +167,25 @@ public class Main {
 			}
 		}
 		if(e.getNewScreen() instanceof RootMenuScreen) {
-			if(getConfig().resetOnMainMenu) {
+			SaveLoadDialogAccessor saveLoadDialog = Cast.from(WilderForge.getViewDependencies().popUpManager.getPopupByClass(SaveLoadDialog.class));
+			boolean waitingForGame = (saveLoadDialog != null && saveLoadDialog.isWaitingForGame());
+			
+			LOGGER.info("SaveLoadDialog: " + saveLoadDialog, "RootMenuCheck");
+			LOGGER.info("waitingForGame: " + waitingForGame, "RootMenuCheck");
+			
+			/*
+			 * Fixes #5 (https://github.com/WilderForge/AutoSplitter/issues/5)
+			 * 
+			 * If a new game is being loaded in the middle of a run, RootMenuScreen is briefly opened.
+			 * 
+			 * We can't reset the timer when this happens. A timer that has been reset is not started.
+			 * Attempting to do so will throw TimerNotStarted.
+			 * 
+			 * When the loading dialog goes away, autosplitter will attempt to unpause the timer. but we
+			 * cannot unpause a timer that hasn't started. So we have to check if there is one and if it's
+			 * waiting for the game to load. If there is a new game being loaded, we can't reset.
+			 */
+			if(!waitingForGame && getConfig().resetOnMainMenu) {
 				timer.reset();
 			}
 		}
