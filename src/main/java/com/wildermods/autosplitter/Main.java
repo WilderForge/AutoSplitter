@@ -41,7 +41,7 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
-		onPreInitialization(new PreInitializationEvent());
+		onPreInitialization(new PreInitializationEvent(null, null));
 	}
 	
 	public static AutosplitterConfiguration getDefaultConfig() {
