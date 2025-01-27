@@ -30,10 +30,7 @@ public class SplitterWebSocket implements AutosplitCommandSender {
 	@OnWebSocketClose
 	public void onWebSocketClose(int statusCode, String reason) {
 		Debug.trace();
-		sessionLog("Closing session. Code: " + statusCode + " Reason: " + reason);
-	    heartbeatScheduler.shutdown();
-		this.session = null;
-		this.sessionID = null;
+		sessionLog("Client Disconnected. Code: " + statusCode + " Reason: " + reason);
 	}
 	
     @OnWebSocketOpen
