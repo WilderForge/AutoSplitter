@@ -1,12 +1,14 @@
 package com.wildermods.autosplitter.net;
 
-import java.net.InetSocketAddress;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
 import org.eclipse.jetty.ee10.websocket.server.config.JettyWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 
 import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.Main;
@@ -20,6 +22,11 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
     public static final String DEFAULT_HOST = "localhost";
     public static final int DEFAULT_PORT = 55555;
     private static SplitterServer INSTANCE = null;
+    private final QueuedThreadPool threadPool = new QueuedThreadPool(4);
+    {
+    	threadPool.setDaemon(true);
+    }
+
 	
     final CopyOnWriteArrayList<SplitterWebSocket> clients = new CopyOnWriteArrayList<>();
     
@@ -45,8 +52,15 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 				LOGGER.catching(e);
 			}
 		}
+		Server server = null;
+		ScheduledExecutorScheduler scheduler = new ScheduledExecutorScheduler("Splitter Server Scheduler", true);
 		try {
-			Server server = new Server(new InetSocketAddress(host, port));
+			server = new Server(threadPool, scheduler, null);
+			
+			ServerConnector connector = new ServerConnector(this);
+			connector.setHost(host);
+			connector.setPort(port);
+			super.addConnector(connector);
 			
 			ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 			context.setContextPath("/");
@@ -61,6 +75,11 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 		}
 		catch(Exception e) {
 			Main.LOGGER.catching(e);
+		}
+		finally {
+			if(server != null) {
+				server.setStopAtShutdown(true);
+			}
 		}
 	}
 	
