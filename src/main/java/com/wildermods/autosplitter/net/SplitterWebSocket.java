@@ -24,7 +24,7 @@ public class SplitterWebSocket implements AutosplitCommandSender {
 	private static final Logger LOGGER = new Logger(SplitterWebSocket.class);
 	
 	private final ScheduledExecutorService heartbeatScheduler = Executors.newScheduledThreadPool(1, runnable -> {
-		Thread thread = new Thread("Splitter Heartbeat");
+		Thread thread = new Thread(runnable, "Splitter Heartbeat");
 		thread.setDaemon(true);
 		return thread;
 	});
