@@ -7,6 +7,7 @@ import java.lang.management.ThreadMXBean;
 import com.wildermods.autosplitter.config.AutosplitterConfiguration;
 import com.wildermods.autosplitter.event.PopUpEvent.PopUpAddEvent;
 import com.wildermods.autosplitter.event.PopUpEvent.PopUpRemoveEvent;
+import com.wildermods.autosplitter.mixins.GameResultsDisplayAccessor;
 import com.wildermods.autosplitter.mixins.SaveLoadDialogAccessor;
 import com.wildermods.autosplitter.mixins.WaitingForGameDialogAccessor;
 import com.wildermods.autosplitter.time.SplitTimer;
@@ -155,10 +156,23 @@ public class Main {
 	@SubscribeEvent
 	public static void onScreenChange(TopLevelScreenChangeEvent.Post e) {
 		if(e.getNewScreen() instanceof GameResultsScreen) {
-			if(getConfig().autosplit && getConfig().splitOnVictoryPopup) {
-				timer.split();
+			if(getConfig().autosplit) {
+				GameResultsScreen screen = Cast.from(e.getNewScreen());
+				GameResultsDisplayAccessor display = Cast.from(screen.creditsDisplay);
+				
+				if(display.isVictory()) {
+					if(getConfig().splitOnVictoryPopup) {
+						timer.split();
+					}
+				}
+				else {
+					if(getConfig().resetOnDefeat) {
+						timer.reset();
+					}
+				}
 			}
 		}
+		
 		if(e.getNewScreen() instanceof RootMenuScreen) {
 			SaveLoadDialogAccessor saveLoadDialog = Cast.from(WilderForge.getViewDependencies().popUpManager.getPopupByClass(SaveLoadDialog.class));
 			boolean waitingForGame = (saveLoadDialog != null && saveLoadDialog.isWaitingForGame());
