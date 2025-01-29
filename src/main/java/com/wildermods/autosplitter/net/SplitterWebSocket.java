@@ -77,6 +77,9 @@ public class SplitterWebSocket implements AutosplitCommandSender {
 	}
 	
 	public void send(Command command) {
+		if(!command.name.equals("ping")) {
+			sessionLog("Sending " + command);
+		}
 		session.sendText(command.toString(), null);
 	}
 	
