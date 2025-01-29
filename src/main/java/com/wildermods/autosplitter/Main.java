@@ -39,11 +39,6 @@ public class Main {
 	public static SplitTimer timer;
 	private static Thread MAIN_THREAD;
 	
-	public static void main(String[] args) throws Exception {
-		MAIN_THREAD = Thread.currentThread();
-		onPreInitialization(new PreInitializationEvent(null, null));
-	}
-	
 	public static AutosplitterConfiguration getDefaultConfig() {
 		return Cast.from(Configuration.getDefaultConfig(Coremods.getCoremod(MOD_ID)));
 	}
