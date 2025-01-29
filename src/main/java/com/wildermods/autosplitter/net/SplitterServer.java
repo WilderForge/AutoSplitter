@@ -4,6 +4,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.eclipse.jetty.ee10.servlet.ServletContextHandler;
 import org.eclipse.jetty.ee10.servlet.ServletHolder;
+import org.eclipse.jetty.ee10.websocket.server.JettyWebSocketServerContainer;
 import org.eclipse.jetty.ee10.websocket.server.config.JettyWebSocketServletContainerInitializer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -16,22 +17,22 @@ import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.time.TimerSettings;
 import com.wildermods.wilderforge.launch.logging.Logger;
 
-public class SplitterServer extends Server implements AutosplitCommandSender {
+public class SplitterServer implements AutosplitCommandSender {
 
 	private static final Logger LOGGER = new Logger(SplitterServer.class);
-    public static final String DEFAULT_HOST = "localhost";
-    public static final int DEFAULT_PORT = 55555;
-    private static SplitterServer INSTANCE = null;
-    private final QueuedThreadPool threadPool = new QueuedThreadPool(4);
-    {
-    	threadPool.setDaemon(true);
-    }
+	public static final String DEFAULT_HOST = "localhost";
+	public static final int DEFAULT_PORT = 55555;
+	private static SplitterServer INSTANCE = null;
+	private final QueuedThreadPool threadPool = new QueuedThreadPool(4);
+	{
+		threadPool.setDaemon(true);
+	}
 
 	
-    final CopyOnWriteArrayList<SplitterWebSocket> clients = new CopyOnWriteArrayList<>();
-    
-    private Server server;
-    
+	final CopyOnWriteArrayList<SplitterWebSocket> clients = new CopyOnWriteArrayList<>();
+	
+	private Server server;
+	
 	public SplitterServer() throws Exception {
 		this(Main.getDefaultConfig().deriveSettings());
 	}
@@ -57,21 +58,25 @@ public class SplitterServer extends Server implements AutosplitCommandSender {
 		try {
 			server = new Server(threadPool, scheduler, null);
 			
-			ServerConnector connector = new ServerConnector(this);
+			ServerConnector connector = new ServerConnector(server);
 			connector.setHost(host);
 			connector.setPort(port);
-			super.addConnector(connector);
+			server.addConnector(connector);
 			
 			ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
 			context.setContextPath("/");
 			server.setHandler(context);
 			
-			JettyWebSocketServletContainerInitializer.configure(context, null);
+			JettyWebSocketServletContainerInitializer.configure(context, (servletContext, wsContainer) -> {
+				JettyWebSocketServerContainer jettyContainer = (JettyWebSocketServerContainer) wsContainer;
+				jettyContainer.addMapping("/", SplitterWebSocket.class);
+			});
+			
 			ServletHolder holder = new ServletHolder("splitter", new SplitterSocketServlet());
 			context.addServlet(holder, "/");
 			
 			this.server = server;
-			this.server.start();
+			server.start();
 		}
 		catch(Exception e) {
 			Main.LOGGER.catching(e);
