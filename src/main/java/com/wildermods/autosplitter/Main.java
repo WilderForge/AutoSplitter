@@ -11,7 +11,6 @@ import com.wildermods.autosplitter.mixins.GameResultsDisplayAccessor;
 import com.wildermods.autosplitter.mixins.SaveLoadDialogAccessor;
 import com.wildermods.autosplitter.mixins.WaitingForGameDialogAccessor;
 import com.wildermods.autosplitter.time.SplitTimer;
-import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
 import com.wildermods.wilderforge.api.mechanicsV1.ChapterSetEvent;
 import com.wildermods.wilderforge.api.mixins.v1.Cast;
 import com.wildermods.wilderforge.api.modLoadingV1.Mod;
@@ -29,6 +28,8 @@ import com.worldwalkergames.legacy.ui.menu.RootMenuScreen;
 import com.worldwalkergames.legacy.ui.menu.SaveLoadDialog;
 import com.worldwalkergames.legacy.ui.menu.WaitingForGameDialog;
 import com.worldwalkergames.ui.popup.IPopUp;
+
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = Main.MOD_ID, version = "@AUTOSPLITTER_VERSION@")
 public class Main {
@@ -55,7 +56,6 @@ public class Main {
 	@SubscribeEvent
 	public static void onPreInitialization(PreInitializationEvent e) throws Exception {
 		MAIN_THREAD = Thread.currentThread();
-		WilderForge.MAIN_BUS.register(Main.class);
 	}
 	
 	@SubscribeEvent
