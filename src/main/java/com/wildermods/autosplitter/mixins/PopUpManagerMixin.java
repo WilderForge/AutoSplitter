@@ -24,7 +24,7 @@ public class PopUpManagerMixin {
 	)
 	public void onPushFront(IPopUp popup, boolean skipFadeIn, CallbackInfo c) {
 		WilderForge.LOGGER.fatal("POPUP FPUSHED: " + popup);
-		if(WilderForge.MAIN_BUS.fire(new PopUpAddEvent.PushFrontEvent.Pre(popup, skipFadeIn))) {
+		if(WilderForge.MAIN_BUS.post(new PopUpAddEvent.PushFrontEvent.Pre(popup, skipFadeIn))) {
 			c.cancel();
 		}
 	}
@@ -39,7 +39,7 @@ public class PopUpManagerMixin {
 	)
 	public void onPushBack(IPopUp popup, CallbackInfo c) {
 		WilderForge.LOGGER.fatal("POPUP BPUSHED: " + popup);
-		if(WilderForge.MAIN_BUS.fire(new PopUpAddEvent.PushBackEvent.Pre(popup))) {
+		if(WilderForge.MAIN_BUS.post(new PopUpAddEvent.PushBackEvent.Pre(popup))) {
 			c.cancel();
 		}
 	}
@@ -54,7 +54,7 @@ public class PopUpManagerMixin {
 	)
 	public void onRemovePopup(IPopUp popup, CallbackInfo c) {
 		WilderForge.LOGGER.error("POPUP REMOVED: " + popup.toString());
-		if(WilderForge.MAIN_BUS.fire(new PopUpRemoveEvent.Post(popup))) {
+		if(WilderForge.MAIN_BUS.post(new PopUpRemoveEvent.Post(popup))) {
 			c.cancel();
 		}
 		

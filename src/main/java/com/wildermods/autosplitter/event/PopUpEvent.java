@@ -1,6 +1,6 @@
 package com.wildermods.autosplitter.event;
 
-import com.wildermods.wilderforge.api.eventV1.Event;
+import com.wildermods.wilderforge.api.eventV2.Event;
 import com.worldwalkergames.ui.popup.IPopUp;
 
 public class PopUpEvent extends Event {

@@ -8,12 +8,13 @@ import com.wildermods.autosplitter.config.AutosplitterConfiguration;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.livesplit.Commands;
 import com.wildermods.autosplitter.net.SplitterServer;
-import com.wildermods.wilderforge.api.eventV1.bus.SubscribeEvent;
 import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigSavedEvent;
 import com.wildermods.wilderforge.launch.WilderForge;
 import com.wildermods.wilderforge.launch.logging.Logger;
 
 import com.worldwalkergames.legacy.context.LegacyViewDependencies;
+
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public class SplitTimer extends PausingTimer implements Timed, AutosplitCommandSender {
 
@@ -105,6 +106,8 @@ public class SplitTimer extends PausingTimer implements Timed, AutosplitCommandS
 	
 	@SubscribeEvent
 	public void onConfigSave(ConfigSavedEvent e) {
+		System.gc();
+		if(e.getCoremod().modId.equals(Main.MOD_ID))
 		settings = ((AutosplitterConfiguration)e.getConfiguration()).deriveSettings();
 	}
 	
