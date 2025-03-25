@@ -5,8 +5,8 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 import com.wildermods.autosplitter.config.AutosplitterConfiguration;
-import com.wildermods.autosplitter.event.PopUpEvent.PopUpAddEvent;
-import com.wildermods.autosplitter.event.PopUpEvent.PopUpRemoveEvent;
+import com.wildermods.wilderforge.api.uiV1.PopUpEvent.PopUpAddEvent;
+import com.wildermods.wilderforge.api.uiV1.PopUpEvent.PopUpRemoveEvent;
 import com.wildermods.autosplitter.mixins.GameResultsDisplayAccessor;
 import com.wildermods.autosplitter.mixins.SaveLoadDialogAccessor;
 import com.wildermods.autosplitter.mixins.WaitingForGameDialogAccessor;
