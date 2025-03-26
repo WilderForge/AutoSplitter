@@ -20,14 +20,18 @@
 	],
 	"depends":{
 		"wildermyth": ">=1.16.0",
-		"wilderforge": ">=0.2.1.0"
+		"wilderforge": ">=0.2.1.0",
+		"eventbus": ">=7.1.0"
 	},
 	"breaks":{
 		"wildermyth": [
 			"<1.16.0"
 		],
 		"wilderforge": [
-			"0.2.1.0"
+			"<0.2.1.3"
+		],
+		"eventbus": [
+			"<7.1.2"
 		],
 		"minecraft":["*"]
 	},

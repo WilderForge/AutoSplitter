@@ -1,6 +1,6 @@
 [versions]
 jetty_version = "12.0.18"
-wilderforge_version = "0.2.1.2"
+wilderforge_version = "0.2.1.3"
 workspace_version = "4.4.2.0"
 
 [libraries]
