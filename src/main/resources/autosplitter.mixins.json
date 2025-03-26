@@ -8,7 +8,6 @@
 	"mixins": [
 		GameKernelMixin,
 		GameResultsDisplayAccessor,
-		PopUpManagerMixin,
 		SaveLoadDialogAccessor,
 		ServerDataContextMixin,
 		WaitingForGameDialogAccessor
