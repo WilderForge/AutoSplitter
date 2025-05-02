@@ -1,5 +1,5 @@
 [versions]
-jetty_version = "12.0.19"
+jetty_version = "12.0.20"
 wilderforge_version = "0.2.1.3"
 workspace_version = "4.4.2.0"
 
