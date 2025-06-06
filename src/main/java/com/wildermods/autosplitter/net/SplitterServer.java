@@ -15,7 +15,7 @@ import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.Main;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.time.TimerSettings;
-import com.wildermods.wilderforge.launch.logging.Logger;
+import com.wildermods.provider.util.logging.Logger;
 
 public class SplitterServer implements AutosplitCommandSender {
 
