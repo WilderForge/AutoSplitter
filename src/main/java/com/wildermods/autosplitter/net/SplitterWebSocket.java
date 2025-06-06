@@ -15,8 +15,8 @@ import com.wildermods.autosplitter.AutosplitCommandSender;
 import com.wildermods.autosplitter.Main;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.livesplit.Commands;
+import com.wildermods.provider.util.logging.Logger;
 import com.wildermods.wilderforge.launch.logging.Debug;
-import com.wildermods.wilderforge.launch.logging.Logger;
 
 @WebSocket
 public class SplitterWebSocket implements AutosplitCommandSender {

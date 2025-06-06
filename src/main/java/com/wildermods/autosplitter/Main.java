@@ -22,7 +22,7 @@ import com.wildermods.wilderforge.launch.coremods.Configuration;
 import com.wildermods.wilderforge.launch.coremods.Coremods;
 import com.wildermods.wilderforge.launch.logging.Debug;
 import com.wildermods.wilderforge.launch.logging.FullThreadInfo;
-import com.wildermods.wilderforge.launch.logging.Logger;
+import com.wildermods.provider.util.logging.Logger;
 import com.worldwalkergames.legacy.ui.credits.GameResultsScreen;
 import com.worldwalkergames.legacy.ui.menu.RootMenuScreen;
 import com.worldwalkergames.legacy.ui.menu.SaveLoadDialog;

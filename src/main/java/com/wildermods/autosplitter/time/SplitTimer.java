@@ -8,9 +8,9 @@ import com.wildermods.autosplitter.config.AutosplitterConfiguration;
 import com.wildermods.autosplitter.livesplit.Command;
 import com.wildermods.autosplitter.livesplit.Commands;
 import com.wildermods.autosplitter.net.SplitterServer;
+import com.wildermods.provider.util.logging.Logger;
 import com.wildermods.wilderforge.api.modLoadingV1.config.ConfigSavedEvent;
 import com.wildermods.wilderforge.launch.WilderForge;
-import com.wildermods.wilderforge.launch.logging.Logger;
 
 import com.worldwalkergames.legacy.context.LegacyViewDependencies;
 
